@@ -1,6 +1,2 @@
 @CeramikaAPI_HostAddress = http://localhost:5194
 
-GET {{CeramikaAPI_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
