@@ -21,7 +21,7 @@ namespace CeramikaAPI.Services
             catch { return null; }
         }
 
-        private UserModel? UserById(int id)
+        public UserModel? UserById(int id)
         {
             try
             {

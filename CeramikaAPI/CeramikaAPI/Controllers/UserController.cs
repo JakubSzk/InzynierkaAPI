@@ -35,6 +35,7 @@ namespace CeramikaAPI.Controllers
         {
             return Ok(userService.GetUsers());
         }
+
         [HttpPost("login")]
         [ProducesResponseType<UserModel>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
