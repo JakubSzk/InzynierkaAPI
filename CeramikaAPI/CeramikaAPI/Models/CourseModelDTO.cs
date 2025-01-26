@@ -9,6 +9,8 @@
         public int Taken { get; set; }
         public int Seats { get; set; }
         public DateTime When { get; set; }
+        public int Length { get; set; }
+        public string Picture { get; set; } = null!;
         public string TeacherName { get; set; }
     }
 }

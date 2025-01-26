@@ -3,6 +3,7 @@ using System;
 using CeramikaAPI.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CeramikaAPI.Migrations
 {
     [DbContext(typeof(CeramikaContext))]
-    partial class CeramikaContextModelSnapshot : ModelSnapshot
+    [Migration("20250104120728_ChangedCourse")]
+    partial class ChangedCourse
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
@@ -34,10 +37,6 @@ namespace CeramikaAPI.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Picture")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<bool>("Private")
                         .HasColumnType("INTEGER");
 
@@ -55,10 +54,10 @@ namespace CeramikaAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TeacherId");
-
-                    b.HasIndex("When")
+                    b.HasIndex("Name")
                         .IsUnique();
+
+                    b.HasIndex("TeacherId");
 
                     b.ToTable("Courses");
                 });
