@@ -10,6 +10,11 @@ namespace CeramikaAPI.Context
         public DbSet<RoleModel> Roles { get; set; } = null!;
         public DbSet<SignedForModel> SignedFor { get; set; } = null!;
         public DbSet<UserRolesModel> UserRoles { get; set; } = null!;
+        public DbSet<ItemModel> Items { get; set; } = null!;
+        public DbSet<PhotoModel> Photos { get; set; } = null!;
+        public DbSet<TagModel> Tags { get; set; } = null!;
+        public DbSet<ItemPhotoModel> ItemPhotos { get; set; } = null!;
+        public DbSet<ItemTagModel> ItemTags { get; set; } = null!;
 
         private string DbPath;
         public CeramikaContext()
