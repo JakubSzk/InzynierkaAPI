@@ -15,11 +15,31 @@ namespace CeramikaAPI.Controllers
         [HttpPost("List")]
         [ProducesResponseType<List<ItemListModelDTO>>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult List(float min, float max, string author, string type, string[] tags)
+        public IActionResult List([FromForm] float min, [FromForm] float max, [FromForm] string[] tags, [FromForm] string author = "", [FromForm] string type = "")
         {
             List<ItemListModelDTO> returnable = itemService.ItemsByFilter(min, max, author, type, tags);
             return returnable == null ? BadRequest() : Ok(returnable);
 
+        }
+        [HttpGet("TagsList")]
+        [ProducesResponseType<List<String>>(StatusCodes.Status200OK)]
+        public IActionResult TagsList()
+        {
+            return Ok(itemService.GetTags());
+        }
+
+        [HttpGet("AuthorsList")]
+        [ProducesResponseType<List<String>>(StatusCodes.Status200OK)]
+        public IActionResult AuthorsList()
+        {
+            return Ok(itemService.GetAuthors());
+        }
+
+        [HttpGet("TypesList")]
+        [ProducesResponseType<List<String>>(StatusCodes.Status200OK)]
+        public IActionResult TypesList()
+        {
+            return Ok(itemService.GetTypes());
         }
 
         [HttpPost("Details")]

@@ -12,12 +12,13 @@ namespace CeramikaAPI.Services
         public ItemService() { context = new CeramikaContext(); }
         public List<ItemListModelDTO> ItemsByFilter(float minPrice, float maxPrice, string author, string type, string[] tags)
         {
-            List<ItemListModelDTO> hold = context.ItemTags.Where(c => tags.Contains(c.Tag.Name) &&
-            c.Item.Type == type &&
+          
+            List<ItemListModelDTO> hold = context.ItemTags.Where(c => (tags.Contains(c.Tag.Name) || tags.Contains(null))  &&
+            (c.Item.Type == type || type=="") &&
             c.Item.Avaible > 0 &&
             c.Item.Price >= minPrice &&
             c.Item.Price <= maxPrice &&
-            c.Item.Author == author)
+            (c.Item.Author == author || author==""))
                 .GroupBy(c => c.Item)
                 .Select(g => new ItemListModelDTO
                 {
@@ -55,6 +56,23 @@ namespace CeramikaAPI.Services
             return returnable;
 
                 
+        }
+
+        public List<String> GetTags()
+        {
+            List<String> returnable = context.Tags.Select(x => x.Name).ToList();
+            return returnable;
+        }
+
+        public List<String> GetAuthors()
+        {
+            List<String> returnable = context.Items.Select(c => c.Author).Distinct().ToList();
+            return returnable;
+        }
+        public List<String> GetTypes()
+        {
+            List<String> returnable = context.Items.Select(c => c.Type).Distinct().ToList();
+            return returnable;
         }
 
         public bool AddTag(string name)
