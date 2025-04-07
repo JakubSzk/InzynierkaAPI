@@ -1,5 +1,7 @@
 ﻿using CeramikaAPI.Context;
 using CeramikaAPI.Models;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace CeramikaAPI.Services
 {
@@ -7,6 +9,68 @@ namespace CeramikaAPI.Services
     {
         private CeramikaContext context;
         public UserService() { context = new CeramikaContext(); }
+
+        private static readonly byte[] StaticSalt = Encoding.UTF8.GetBytes("StałaSól1234567");
+        private static readonly byte[] StaticIV = Encoding.UTF8.GetBytes("InicjalVector123");
+
+        public static byte[] DeriveKeyFromPassword(string password, int keySize = 32)
+        {
+            var newKey = new Rfc2898DeriveBytes(password, StaticSalt, 100_000, HashAlgorithmName.SHA256);
+            return newKey.GetBytes(keySize); 
+        }
+
+        public static byte[] EncryptToken(string plainText, byte[] key)
+        {
+            using var aes = Aes.Create();
+            aes.Key = key;
+            aes.IV = StaticIV;
+            aes.Mode = CipherMode.CBC;
+
+            using var encryptor = aes.CreateEncryptor();
+            byte[] plainBytes = Encoding.UTF8.GetBytes(plainText);
+            return encryptor.TransformFinalBlock(plainBytes, 0, plainBytes.Length);
+        }
+
+        public static string GenerateToken(string username)
+        {
+           
+            byte[] key = DeriveKeyFromPassword("passwordofsite");
+            
+
+            string payload = $"{username}";
+            byte[] encrypted = EncryptToken(payload, key);
+
+            
+            byte[] tokenBytes = StaticSalt.Concat(StaticIV).Concat(encrypted).ToArray();
+            return Convert.ToBase64String(tokenBytes);
+        }
+
+        public static string DecryptToken(string tokenBase64)
+        {
+            byte[] ciphertext = Convert.FromBase64String(tokenBase64);
+
+            
+            byte[] key = DeriveKeyFromPassword("passwordofsite"); 
+            byte[] iv = StaticIV;
+
+            using var aes = Aes.Create();
+            aes.Key = key;
+            aes.IV = iv;
+            aes.Mode = CipherMode.CBC;
+            aes.Padding = PaddingMode.PKCS7;
+
+            using var decryptor = aes.CreateDecryptor();
+            byte[] decryptedBytes = decryptor.TransformFinalBlock(ciphertext, 0, ciphertext.Length);
+
+            return Encoding.UTF8.GetString(decryptedBytes);
+        }
+
+        public UserModel? VerifyUser(string token)
+        {
+            var user = UserByName(DecryptToken(token));
+            return user;
+        }
+
         public List<UserModel> GetUsers()
         {
             return context.Users.ToList();
@@ -51,6 +115,11 @@ namespace CeramikaAPI.Services
             var user = UserByName(name);
             if (user == null) { return null; }
             if (user.Password != password) { return null; }
+            user.Name = GenerateToken(user.Name);
+            user.Password = "";
+            user.Email = "";
+
+
             return user;
         }
 

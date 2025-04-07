@@ -42,7 +42,7 @@ namespace CeramikaAPI.Controllers
             return Ok(itemService.GetTypes());
         }
 
-        [HttpPost("Details")]
+        [HttpGet("Details")]
         [ProducesResponseType<ItemListModelDTO>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult Details(int idItem)
