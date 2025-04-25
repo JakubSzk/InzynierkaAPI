@@ -10,7 +10,7 @@ namespace CeramikaAPI.Services
         private CeramikaContext context;
         public UserService() { context = new CeramikaContext(); }
 
-        private static readonly byte[] StaticSalt = Encoding.UTF8.GetBytes("StałaSól1234567");
+        private static readonly byte[] StaticSalt = Encoding.UTF8.GetBytes("StalaSol12345678");
         private static readonly byte[] StaticIV = Encoding.UTF8.GetBytes("InicjalVector123");
 
         public static byte[] DeriveKeyFromPassword(string password, int keySize = 32)
@@ -47,12 +47,18 @@ namespace CeramikaAPI.Services
 
         public static string DecryptToken(string tokenBase64)
         {
-            byte[] ciphertext = Convert.FromBase64String(tokenBase64);
+            byte[] tokenBytes = Convert.FromBase64String(tokenBase64);
+
+            
+            byte[] salt = tokenBytes.Take(16).ToArray(); 
+            byte[] iv = tokenBytes.Skip(16).Take(16).ToArray();
+            byte[] ciphertext = tokenBytes.Skip(32).ToArray();
 
             
             byte[] key = DeriveKeyFromPassword("passwordofsite"); 
-            byte[] iv = StaticIV;
+            byte[] expectedIV = StaticIV;
 
+            
             using var aes = Aes.Create();
             aes.Key = key;
             aes.IV = iv;
@@ -65,10 +71,14 @@ namespace CeramikaAPI.Services
             return Encoding.UTF8.GetString(decryptedBytes);
         }
 
-        public UserModel? VerifyUser(string token)
+        public bool? VerifyUser(string token)
         {
             var user = UserByName(DecryptToken(token));
-            return user;
+            if (user == null) { return null; }
+            var search = context.UserRoles.Where(c => (c.Role.Name == "Admin" && c.User.Name == user.Name)).ToList();
+            if (search.Any()) { return true; }    
+            else { return false; }
+                
         }
 
         public List<UserModel> GetUsers()

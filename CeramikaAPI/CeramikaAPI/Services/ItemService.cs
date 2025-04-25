@@ -10,6 +10,7 @@ namespace CeramikaAPI.Services
     {
         private CeramikaContext context;
         public ItemService() { context = new CeramikaContext(); }
+        private UserService userService = new UserService();
         public List<ItemListModelDTO> ItemsByFilter(float minPrice, float maxPrice, string author, string type, string[] tags)
         {
           
@@ -75,28 +76,34 @@ namespace CeramikaAPI.Services
             return returnable;
         }
 
-        public bool AddTag(string name)
+        public bool AddTag(string name, string token)
         {
+            bool? test = userService.VerifyUser(token);
+            if (test == null || test == false) { return false; }
             context.Tags.Add(new TagModel { Name = name });
             try { context.SaveChanges(); }
             catch (Exception ex) { return false; }
             return true;
         }
 
-        public bool AddTagsToItem(int idItem, List<int> idTags)
+        public bool AddTagsToItem(int idItem,string token, int[] idTags)
         {
+            bool? test = userService.VerifyUser(token);
+            if (test == null || test == false) { return false; }
             var hold = context.Items.First(x => x.Id == idItem);
             foreach (var idTag in idTags)
             {
-                context.ItemTags.Add(new ItemTagModel { Item = hold, Tag = context.Tags.First(f => f.Id != idTag) });
+                context.ItemTags.Add(new ItemTagModel { Item = hold, Tag = context.Tags.First(f => f.Id == idTag) });
             };
             try { context.SaveChanges(); }
             catch (Exception ex) { return false; }
             return true;
         }
 
-        public bool AddPhotosToItem(int idItem, List<int> idPhotos)
+        public bool AddPhotosToItem(int idItem, string token, int[] idPhotos)
         {
+            bool? test = userService.VerifyUser(token);
+            if (test == null || test == false) { return false; }
             var hold = context.Items.First(x => x.Id == idItem);
             foreach (var idPhoto in idPhotos)
             {
@@ -107,32 +114,40 @@ namespace CeramikaAPI.Services
             return true;
         }
 
-        public bool AddPhoto(string name)
+        public bool AddPhoto(string name, string token)
         {
+            bool? test = userService.VerifyUser(token);
+            if (test == null || test == false) { return false; }
             context.Photos.Add(new PhotoModel { Name = name });
             try { context.SaveChanges(); }
             catch (Exception ex) { return false; }
             return true;
         }
 
-        public bool RemoveTag(string name)
+        public bool RemoveTag(string name, string token)
         {
+            bool? test = userService.VerifyUser(token);
+            if (test == null || test == false) { return false; }
             context.Tags.Remove(context.Tags.First(t =>  t.Name == name));
             try { context.SaveChanges(); }
             catch (Exception ex) { return false; }
             return true;
         }
 
-        public bool RemovePhoto(string name)
+        public bool RemovePhoto(string name, string token)
         {
+            bool? test = userService.VerifyUser(token);
+            if (test == null || test == false) { return false; }
             context.Photos.Remove(context.Photos.First(t => t.Name == name));
             try { context.SaveChanges(); }
             catch (Exception ex) { return false; }
             return true;
         }
 
-        public bool AddItem(string name, string description, string type, int amount, float price, string model, string author)
+        public bool AddItem(string name, string description, string type, int amount, float price, string model, string author, string token)
         {
+            bool? test = userService.VerifyUser(token);
+            if (test == null || test == false) { return false; }
             var hold = context.Items.Add(new ItemModel { Name = name, Description = description, Type = type, Avaible = amount, Price = price, Model = model, Author = author });
             
             

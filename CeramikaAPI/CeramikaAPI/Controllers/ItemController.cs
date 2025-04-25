@@ -55,63 +55,63 @@ namespace CeramikaAPI.Controllers
         [HttpPost("AddTag")]
         [ProducesResponseType<bool>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult AddTag(string tag)
+        public IActionResult AddTag([FromForm]string tag, [FromForm]string token)
         {
-            var hold = itemService.AddTag(tag);
+            var hold = itemService.AddTag(tag, token);
             return hold ? Ok(true) : BadRequest();
         }
 
         [HttpPost("AddPhoto")]
         [ProducesResponseType<bool>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult AddPhoto(string photo)
+        public IActionResult AddPhoto([FromForm]string photo, [FromForm]string token)
         {
-            var hold = itemService.AddPhoto(photo);
+            var hold = itemService.AddPhoto(photo, token);
             return hold ? Ok(true) : BadRequest();
         }
 
         [HttpPost("DeleteTag")]
         [ProducesResponseType<bool>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult DeleteTag(string tag)
+        public IActionResult DeleteTag([FromForm]string tag, [FromForm]string token)
         {
-            var hold = itemService.RemoveTag(tag);
+            var hold = itemService.RemoveTag(tag, token);
             return hold ? Ok(true) : BadRequest();
         }
 
         [HttpPost("DeletePhoto")]
         [ProducesResponseType<bool>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult DeletePhoto(string photo)
+        public IActionResult DeletePhoto([FromForm]string photo, [FromForm]string token)
         {
-            var hold = itemService.RemovePhoto(photo);
+            var hold = itemService.RemovePhoto(photo, token);
             return hold ? Ok(true) : BadRequest();
         }
 
         [HttpPost("AddItem")]
         [ProducesResponseType<bool>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult AddItem(string name, string description, string type, int amount, float price, string model, string author)
+        public IActionResult AddItem([FromForm] string name, [FromForm] string description, [FromForm] string type, [FromForm] int amount, [FromForm] float price, [FromForm] string model, [FromForm] string author, [FromForm]string token)
         {
-            var hold = itemService.AddItem(name, description, type, amount, price, model, author);
+            var hold = itemService.AddItem(name, description, type, amount, price, model, author, token);
             return hold ? Ok(true) : BadRequest();
         }
 
         [HttpPost("AddTagsItem")]
         [ProducesResponseType<bool>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult AddTagsItem(int idItem, List<int> idTags)
+        public IActionResult AddTagsItem([FromForm]int idItem, [FromForm]string token, [FromForm]int[] idTags)
         {
-            var hold = itemService.AddTagsToItem(idItem, idTags);
+            var hold = itemService.AddTagsToItem(idItem, token, idTags);
             return hold ? Ok(true) : BadRequest();
         }
 
         [HttpPost("AddPhotosItem")]
         [ProducesResponseType<bool>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult AddPhotosItem(int idItem, List<int> idPhotos)
+        public IActionResult AddPhotosItem([FromForm]int idItem, [FromForm]string token, [FromForm]int[] idPhotos)
         {
-            var hold = itemService.AddPhotosToItem(idItem, idPhotos);
+            var hold = itemService.AddPhotosToItem(idItem, token, idPhotos);
             return hold ? Ok(true) : BadRequest();
         }
 
