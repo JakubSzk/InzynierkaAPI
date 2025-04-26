@@ -13,13 +13,30 @@ namespace CeramikaAPI.Services
         private UserService userService = new UserService();
         public List<ItemListModelDTO> ItemsByFilter(float minPrice, float maxPrice, string author, string type, string[] tags)
         {
-          
-            List<ItemListModelDTO> hold = context.ItemTags.Where(c => (tags.Contains(c.Tag.Name) || tags.Contains(null))  &&
-            (c.Item.Type == type || type=="") &&
+
+            
+            List<ItemListModelDTO> hold = tags.Contains(null) ? context.Items.Where(c => (c.Type == type || type == "") &&
+            c.Avaible > 0 &&
+            c.Price >= minPrice &&
+            c.Price <= maxPrice &&
+            (c.Author == author || author == "")).Select(g => new ItemListModelDTO
+            {
+                Id = g.Id,
+                Name = g.Name,
+                Type = g.Type,
+                Model = "",
+                Tags = context.ItemTags.Where(x => x.Item.Id == g.Id).Select(y => y.Tag.Name).ToList(), //g.Select(t => t.Tag.Name).ToList(),
+                Author = g.Author,
+                Price = g.Price,
+                Description = "",
+                Photos = context.ItemPhotos.Where(x => x.Item.Id == g.Id).Select(y => y.Photo.Name).ToList(),
+                Avaible = g.Avaible
+            }).ToList() : context.ItemTags.Where(c => (tags.Contains(c.Tag.Name)) &&
+            (c.Item.Type == type || type == "") &&
             c.Item.Avaible > 0 &&
             c.Item.Price >= minPrice &&
             c.Item.Price <= maxPrice &&
-            (c.Item.Author == author || author==""))
+            (c.Item.Author == author || author == ""))
                 .GroupBy(c => c.Item)
                 .Select(g => new ItemListModelDTO
                 {

@@ -5,6 +5,17 @@ using CeramikaAPI.Services;
 
 namespace CeramikaAPI.Controllers
 {
+    public class ItemCreationForm
+    {
+        public string name { get; set; } = null!;
+        public string description { get; set; } = null!;
+        public string type { get; set; } = null!;
+        public int amount { get; set; }
+        public float price { get; set; }
+        public string model { get; set; } = null!;
+        public string author { get; set; } = null!;
+        public string token { get; set; } = null!;
+    }
     [Route("api/items")]
     [ApiController]
     public class ItemController : ControllerBase
@@ -91,9 +102,9 @@ namespace CeramikaAPI.Controllers
         [HttpPost("AddItem")]
         [ProducesResponseType<bool>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult AddItem([FromForm] string name, [FromForm] string description, [FromForm] string type, [FromForm] int amount, [FromForm] float price, [FromForm] string model, [FromForm] string author, [FromForm]string token)
+        public IActionResult AddItem([FromForm] ItemCreationForm itemCreationForm)
         {
-            var hold = itemService.AddItem(name, description, type, amount, price, model, author, token);
+            var hold = itemService.AddItem(itemCreationForm.name, itemCreationForm.description, itemCreationForm.type, itemCreationForm.amount, itemCreationForm.price, itemCreationForm.model, itemCreationForm.author, itemCreationForm.token);
             return hold ? Ok(true) : BadRequest();
         }
 
