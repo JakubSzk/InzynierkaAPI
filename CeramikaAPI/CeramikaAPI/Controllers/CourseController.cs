@@ -19,6 +19,7 @@ namespace CeramikaAPI.Controllers
     public class ReturnCourse : CourseForm
     {
         public int Id { get; set; }
+        
     }
 
 
@@ -42,10 +43,11 @@ namespace CeramikaAPI.Controllers
         [HttpPost("create")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Create([FromForm] CourseForm courseForm)
+        public IActionResult Create([FromForm] CourseForm courseForm, [FromForm]string token)
         {
             UserService userService = new();
-
+            bool? test = userService.VerifyUser(token);
+            if (test == null || test == false) { return BadRequest(); }
             CourseModel model = new CourseModel
             {
                 Name = courseForm.Name,
@@ -64,8 +66,11 @@ namespace CeramikaAPI.Controllers
         [HttpPost("delete")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Delete(int id)
+        public IActionResult Delete([FromForm] int id, [FromForm] string token)
         {
+            UserService userService = new();
+            bool? test = userService.VerifyUser(token);
+            if (test == null || test == false) { return BadRequest(); }
             return courseService.DeleteCourse(id) ? Ok(true) : BadRequest();
         }
 
