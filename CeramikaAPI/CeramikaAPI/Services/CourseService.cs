@@ -62,7 +62,7 @@ namespace CeramikaAPI.Services
             {
                 var hold = context.Courses.Include(c => c.Teacher).FirstOrDefault(x => x.Id == id);
                 if (hold == null) return null;
-                return new CourseModelDTO { Id = hold.Id, Picture = hold.Picture, Description = hold.Description, Length = hold.Length, Name = hold.Name, Private = hold.Private, Seats = hold.Seats, Taken = hold.Seats, When = hold.When, TeacherName = hold.Teacher.Name };
+                return new CourseModelDTO { Id = hold.Id, Picture = hold.Picture, Description = hold.Description, Length = hold.Length, Name = hold.Name, Private = hold.Private, Seats = hold.Seats, Taken = hold.Taken, When = hold.When, TeacherName = hold.Teacher.Name };
             }
             catch
             {
