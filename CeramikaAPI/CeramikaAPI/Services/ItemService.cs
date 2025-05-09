@@ -173,6 +173,15 @@ namespace CeramikaAPI.Services
 
         }
 
+        public bool SellItem(int id)
+        {
+
+            var item = context.Items.FirstOrDefault(c => c.Id == id);
+            if (item == null) { return false; };
+            item.Avaible--;
+            context.SaveChanges() ; 
+            return true;
+        }
         public List<PhotoModel> ShowPhotos()
         {
             return context.Photos.ToList();

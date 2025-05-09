@@ -81,12 +81,20 @@ namespace CeramikaAPI.Services
                 
         }
 
+        public UserModel CheckUser(string token)
+        {
+            var user = UserByName(DecryptToken(token));
+            if (user == null) { return null; }
+            return user;
+
+        }
+
         public List<UserModel> GetUsers()
         {
             return context.Users.ToList();
         }
 
-        private UserModel? UserByName(string name)
+        public UserModel? UserByName(string name)
         { 
             try
             {

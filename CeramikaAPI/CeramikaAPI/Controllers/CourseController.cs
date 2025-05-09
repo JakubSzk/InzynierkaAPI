@@ -109,6 +109,33 @@ namespace CeramikaAPI.Controllers
             var hold = courseService.GetCourseByIdDTO(id);
             return hold == null ? BadRequest() : Ok(hold);
         }
+
+        [HttpPost("sign")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult Sign([FromForm]string token, [FromForm] int course)
+        {
+            var hold = courseService.SignForCourse(token, course);
+            return hold ? Ok() : BadRequest();
+        }
+
+        [HttpPost("signPrivate")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult SignPrivate([FromForm] string token, [FromForm] DateTime when, [FromForm] int length, [FromForm] int seats)
+        {
+            var hold = courseService.PrivateCourse(token, when, length, seats);
+            return hold ? Ok() : BadRequest();
+        }
+
+        [HttpPost("listForUser")]
+        [ProducesResponseType<List<CourseModelDTO>>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult ListForUser([FromForm] string token)
+        {
+            var hold = courseService.UserCourses(token);
+            return hold != null ? Ok(hold) : BadRequest();
+        }
     }
     
 }

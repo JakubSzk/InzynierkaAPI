@@ -44,6 +44,58 @@ namespace CeramikaAPI.Services
             return course;
         }
 
+        public bool PrivateCourse(string token, DateTime when, int length, int seats)
+        {
+            if (token == null) return false;
+            UserService userService = new UserService();
+            CourseModel course = new CourseModel();
+            course.Length = length;
+            course.Seats = seats;
+            course.Private = true;
+            course.Picture = "";
+            course.Name = "private";
+            course.Description = "";
+            course.Taken = seats;
+            var user = userService.CheckUser(token);
+            if (user == null) return false;
+            course.Teacher = context.UserRoles.First(c => c.Role.Name == "Admin").User;
+            course.When = new DateTime(when.Year, when.Month, when.Day, when.Hour, 0, 0);
+            var test = AvaibleHoursInDay(when.Day, when.Month, when.Year);
+            for (int i = when.Hour; i < (when.Hour + course.Length); i++)
+            {
+                if (!test.Contains(i))
+                    return false;
+            }
+            context.Attach(course.Teacher);
+            context.Users.Attach(user);
+            context.Add(course);
+            context.SignedFor.Add(new SignedForModel { Course = course, User = user });
+            context.SaveChanges();
+            return true;
+        }
+
+        public List<CourseModelDTO> UserCourses(string token)
+        {
+            UserService userService = new UserService();
+            var user = userService.CheckUser(token);
+            List<CourseModelDTO> returnable =  context.SignedFor.Where(c => c.User == user).Select(c => new CourseModelDTO
+            {
+                
+                Id = c.Course.Id,
+                Name = c.Course.Name,
+                Description = c.Course.Description,
+                Private = c.Course.Private,
+                Taken = c.Course.Taken,
+                Seats = c.Course.Seats,
+                Length = c.Course.Length,
+                When = c.Course.When,
+                TeacherName = c.Course.Teacher.Name,
+                Picture = c.Course.Picture,
+            }).ToList();
+            return returnable;
+
+        }
+
         private CourseModel? GetCourseById(int id)
         {
             try
@@ -90,6 +142,22 @@ namespace CeramikaAPI.Services
                 return false; 
             }
         }
+
+        public bool SignForCourse(string userToken, int idCourse)
+        {
+            UserService userService = new UserService();
+            var user = userService.CheckUser(userToken);
+            var course = GetCourseById(idCourse);
+            var courses = context.SignedFor.Where(s => s.Course == course && s.User == user);
+            if (courses.Any() || course.Seats == course.Taken) {return false;}
+            course.Taken++;
+            context.Users.Attach(user);
+            context.SignedFor.Add(new SignedForModel {Course = course, User = user});
+            context.SaveChanges();
+            return true;
+        }
+
+
 
 
         public List<AmountPerIndexModel> ListOfCoursesPerDay(bool isPrivate, int month, int year)

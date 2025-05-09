@@ -66,7 +66,7 @@ namespace CeramikaAPI.Controllers
         [HttpPost("AddTag")]
         [ProducesResponseType<bool>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult AddTag([FromForm]string tag, [FromForm]string token)
+        public IActionResult AddTag([FromForm] string tag, [FromForm] string token)
         {
             var hold = itemService.AddTag(tag, token);
             return hold ? Ok(true) : BadRequest();
@@ -75,7 +75,7 @@ namespace CeramikaAPI.Controllers
         [HttpPost("AddPhoto")]
         [ProducesResponseType<bool>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult AddPhoto([FromForm]string photo, [FromForm]string token)
+        public IActionResult AddPhoto([FromForm] string photo, [FromForm] string token)
         {
             var hold = itemService.AddPhoto(photo, token);
             return hold ? Ok(true) : BadRequest();
@@ -84,7 +84,7 @@ namespace CeramikaAPI.Controllers
         [HttpPost("DeleteTag")]
         [ProducesResponseType<bool>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult DeleteTag([FromForm]string tag, [FromForm]string token)
+        public IActionResult DeleteTag([FromForm] string tag, [FromForm] string token)
         {
             var hold = itemService.RemoveTag(tag, token);
             return hold ? Ok(true) : BadRequest();
@@ -93,7 +93,7 @@ namespace CeramikaAPI.Controllers
         [HttpPost("DeletePhoto")]
         [ProducesResponseType<bool>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult DeletePhoto([FromForm]string photo, [FromForm]string token)
+        public IActionResult DeletePhoto([FromForm] string photo, [FromForm] string token)
         {
             var hold = itemService.RemovePhoto(photo, token);
             return hold ? Ok(true) : BadRequest();
@@ -111,7 +111,7 @@ namespace CeramikaAPI.Controllers
         [HttpPost("AddTagsItem")]
         [ProducesResponseType<bool>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult AddTagsItem([FromForm]int idItem, [FromForm]string token, [FromForm]int[] idTags)
+        public IActionResult AddTagsItem([FromForm] int idItem, [FromForm] string token, [FromForm] int[] idTags)
         {
             var hold = itemService.AddTagsToItem(idItem, token, idTags);
             return hold ? Ok(true) : BadRequest();
@@ -120,7 +120,7 @@ namespace CeramikaAPI.Controllers
         [HttpPost("AddPhotosItem")]
         [ProducesResponseType<bool>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult AddPhotosItem([FromForm]int idItem, [FromForm]string token, [FromForm]int[] idPhotos)
+        public IActionResult AddPhotosItem([FromForm] int idItem, [FromForm] string token, [FromForm] int[] idPhotos)
         {
             var hold = itemService.AddPhotosToItem(idItem, token, idPhotos);
             return hold ? Ok(true) : BadRequest();
@@ -140,6 +140,15 @@ namespace CeramikaAPI.Controllers
         public IActionResult ShowPhotos()
         {
             return Ok(itemService.ShowPhotos());
+        }
+
+        [HttpGet("Buy")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult Buy(int id) 
+        {
+            bool hold = itemService.SellItem(id);
+            return hold ? Ok() : BadRequest();
         }
     }
 }
